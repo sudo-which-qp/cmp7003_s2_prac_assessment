@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Personal Expense Tracker</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="loading">Loading…</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="warning">Warning</string>
+    <string name="confirm">Confirm</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="clear_filters">Clear Filters</string>
+    <string name="no_data_available">No data available</string>
+
+    <!-- Authentication -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="login_success">Login successful</string>
+    <string name="register_success">Registration successful</string>
+    <string name="login_error">Login failed</string>
+    <string name="register_error">Registration failed</string>
+    <string name="password_change_success">Password changed successfully</string>
+    <string name="password_change_error">Failed to change password</string>
+
+    <!-- Main Activity / Navigation -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="expenses">Expenses</string>
+    <string name="categories">Categories</string>
+    <string name="insights">Insights</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="help">Help</string>
+
+    <!-- Dashboard -->
+    <string name="total_expenses">Total Expenses</string>
+    <string name="monthly_expenses">Monthly Expenses</string>
+    <string name="weekly_expenses">Weekly Expenses</string>
+    <string name="recent_expenses">Recent Expenses</string>
+    <string name="by_category">By Category</string>
+    <string name="view_all">View All</string>
+    <string name="monthly_overview">Monthly Overview</string>
+
+    <!-- Expense Form -->
+    <string name="add_expense">Add Expense</string>
+    <string name="edit_expense">Edit Expense</string>
+    <string name="expense_title">Title</string>
+    <string name="expense_amount">Amount</string>
+    <string name="expense_date">Date</string>
+    <string name="expense_time">Time</string>
+    <string name="expense_category">Category</string>
+    <string name="expense_location">Location</string>
+    <string name="expense_notes">Notes</string>
+    <string name="expense_added">Expense added successfully</string>
+    <string name="expense_updated">Expense updated successfully</string>
+    <string name="expense_deleted">Expense deleted successfully</string>
+    <string name="expense_add_error">Failed to add expense</string>
+    <string name="expense_update_error">Failed to update expense</string>
+    <string name="expense_delete_error">Failed to delete expense</string>
+
+    <!-- Expense List -->
+    <string name="all_expenses">All Expenses</string>
+    <string name="no_expenses">No expenses found</string>
+    <string name="filter_expenses">Filter Expenses</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="apply_filter">Apply Filter</string>
+    <string name="all_categories">All Categories</string>
+
+    <!-- Category Management -->
+    <string name="add_category">Add Category</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="category_name">Category Name</string>
+    <string name="category_description">Description</string>
+    <string name="category_color">Color</string>
+    <string name="select_color">Select Color</string>
+    <string name="no_categories">No categories found</string>
+    <string name="category_added">Category added successfully</string>
+    <string name="category_updated">Category updated successfully</string>
+    <string name="category_deleted">Category deleted successfully</string>
+    <string name="category_add_error">Failed to add category</string>
+    <string name="category_update_error">Failed to update category</string>
+    <string name="category_delete_error">Failed to delete category</string>
+    <string name="default_category_delete_error">Default categories cannot be deleted</string>
+
+    <!-- Insights / Analytics -->
+    <string name="insights_and_analytics">Insights &amp; Analytics</string>
+    <string name="expense_summary">Expense Summary</string>
+    <string name="expense_trends">Expense Trends</string>
+    <string name="category_breakdown">Category Breakdown</string>
+    <string name="location_breakdown">Location Breakdown</string>
+    <string name="monthly_breakdown">Monthly Breakdown</string>
+    <string name="statistics">Statistics</string>
+    <string name="average_daily_expense">Average Daily Expense</string>
+    <string name="max_expense">Highest Expense</string>
+    <string name="most_expensive_category">Most Expensive Category</string>
+
+    <!-- Settings -->
+    <string name="profile">Profile</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="change_password">Change Password</string>
+    <string name="profile_updated">Profile updated successfully</string>
+    <string name="profile_update_error">Failed to update profile</string>
+    <string name="app_settings">App Settings</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="currency">Currency</string>
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="enter_password_to_confirm">Enter your password to confirm</string>
+    <string name="account_deleted">Account deleted successfully</string>
+    <string name="account_delete_error">Failed to delete account</string>
+</resources>
