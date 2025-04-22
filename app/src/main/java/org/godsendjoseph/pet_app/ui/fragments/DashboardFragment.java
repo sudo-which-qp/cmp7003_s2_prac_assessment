@@ -1,9 +1,11 @@
 package org.godsendjoseph.pet_app.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +21,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.godsendjoseph.pet_app.R;
 import org.godsendjoseph.pet_app.models.Expense;
 import org.godsendjoseph.pet_app.models.ExpenseSummary;
+import org.godsendjoseph.pet_app.ui.activities.ExpenseFormActivity;
+import org.godsendjoseph.pet_app.ui.activities.ExpenseListActivity;
 import org.godsendjoseph.pet_app.ui.adapters.ExpenseAdapter;
 import org.godsendjoseph.pet_app.ui.adapters.ExpenseSummaryAdapter;
 import org.godsendjoseph.pet_app.ui.viewmodels.DashboardViewModel;
+import org.godsendjoseph.pet_app.utils.CurrencyUtils;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Collections;
+import java.util.Date;
 
 public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpenseClickListener {
 
@@ -42,6 +52,7 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
     private RecyclerView rvRecentExpenses;
     private ProgressBar progressBar;
     private View viewChartContainer;
+    private TextView tvViewAllExpenses;
 
     // Adapters
     private ExpenseSummaryAdapter categorySummaryAdapter;
@@ -67,10 +78,47 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         // Set up adapters
         setupAdapters();
 
+        // Setup click listeners
+        setupClickListeners();
+
         // Observe data
         observeViewModel();
 
         // Load data
+        // Load data with a slight delay to ensure views are ready
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Refresh data when returning to this fragment
+        refreshData();
+
+        // Force adapter updates
+        if (categorySummaryAdapter != null && viewModel.getCategorySummaryLiveData().getValue() != null) {
+            categorySummaryAdapter.updateSummaryList(viewModel.getCategorySummaryLiveData().getValue());
+        }
+
+        if (recentExpensesAdapter != null && viewModel.getRecentExpensesLiveData().getValue() != null) {
+            recentExpensesAdapter.updateExpenseList(viewModel.getRecentExpensesLiveData().getValue());
+        }
+
+        // Request layout refresh
+        if (rvCategorySummary != null) rvCategorySummary.requestLayout();
+        if (rvRecentExpenses != null) rvRecentExpenses.requestLayout();
+    }
+
+    /**
+     * Refresh all dashboard data
+     */
+    public void refreshData() {
         viewModel.loadDashboardData();
     }
 
@@ -82,6 +130,7 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         rvRecentExpenses = view.findViewById(R.id.rv_recent_expenses);
         progressBar = view.findViewById(R.id.progress_bar);
         viewChartContainer = view.findViewById(R.id.chart_container);
+        tvViewAllExpenses = view.findViewById(R.id.tv_view_all_expenses);
     }
 
     private void setupAdapters() {
@@ -96,13 +145,30 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         rvRecentExpenses.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 
+    private void setupClickListeners() {
+        // Setup "View All" click listener for expenses
+        if (tvViewAllExpenses != null) {
+            tvViewAllExpenses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Navigate to the expense list activity/fragment
+                    // This depends on your navigation structure
+                    if (getActivity() != null) {
+                        Intent intent = new Intent(getActivity(), ExpenseListActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+        }
+    }
+
     private void observeViewModel() {
         // Observe total expenses
         viewModel.getTotalExpensesLiveData().observe(getViewLifecycleOwner(), new Observer<Double>() {
             @Override
             public void onChanged(Double total) {
-                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
-                tvTotalExpenses.setText(currencyFormat.format(total));
+                // Use CurrencyUtils for consistent currency formatting
+                tvTotalExpenses.setText(CurrencyUtils.formatCurrency(requireContext(), total));
             }
         });
 
@@ -110,8 +176,8 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         viewModel.getMonthlyExpensesLiveData().observe(getViewLifecycleOwner(), new Observer<Double>() {
             @Override
             public void onChanged(Double monthly) {
-                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
-                tvMonthlyExpenses.setText(currencyFormat.format(monthly));
+                // Use CurrencyUtils for consistent currency formatting
+                tvMonthlyExpenses.setText(CurrencyUtils.formatCurrency(requireContext(), monthly));
             }
         });
 
@@ -119,8 +185,8 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         viewModel.getWeeklyExpensesLiveData().observe(getViewLifecycleOwner(), new Observer<Double>() {
             @Override
             public void onChanged(Double weekly) {
-                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
-                tvWeeklyExpenses.setText(currencyFormat.format(weekly));
+                // Use CurrencyUtils for consistent currency formatting
+                tvWeeklyExpenses.setText(CurrencyUtils.formatCurrency(requireContext(), weekly));
             }
         });
 
@@ -172,26 +238,109 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
     }
 
     private void updateChart(Map<String, Double> chartData) {
-        // In a real app, you would use a charting library like MPAndroidChart
-        // For this prototype, we'll simulate chart display
-
-        // Example code for when we add a charting library:
-        /*
-        BarChart barChart = view.findViewById(R.id.bar_chart);
-        List<BarEntry> entries = new ArrayList<>();
-
-        int index = 0;
-        for (Map.Entry<String, Double> entry : chartData.entrySet()) {
-            entries.add(new BarEntry(index++, entry.getValue().floatValue()));
+        if (chartData == null || chartData.isEmpty()) {
+            viewChartContainer.setVisibility(View.GONE);
+            return;
         }
 
-        BarDataSet dataSet = new BarDataSet(entries, "Monthly Expenses");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        // Make sure the chart container is visible
+        viewChartContainer.setVisibility(View.VISIBLE);
 
-        BarData barData = new BarData(dataSet);
-        barChart.setData(barData);
-        barChart.invalidate();
-        */
+        // Get reference to chart view
+        View chartView = viewChartContainer.findViewById(R.id.chart_view);
+        if (chartView == null) return;
+
+        // Clear any previous content if it's a ViewGroup
+        if (chartView instanceof ViewGroup) {
+            ((ViewGroup) chartView).removeAllViews();
+
+            // Create a linear layout to show bars
+            LinearLayout chartLayout = new LinearLayout(requireContext());
+            chartLayout.setOrientation(LinearLayout.VERTICAL);
+            chartLayout.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+
+            // Find max value for scaling
+            double maxValue = 0;
+            for (Double value : chartData.values()) {
+                if (value > maxValue) maxValue = value;
+            }
+
+            // Create a sorted list of month entries
+            List<Map.Entry<String, Double>> sortedEntries = new ArrayList<>(chartData.entrySet());
+
+            // Sort by month (assuming format is "MMM yyyy")
+            Collections.sort(sortedEntries, new Comparator<Map.Entry<String, Double>>() {
+                @Override
+                public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                    try {
+                        SimpleDateFormat format = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
+                        Date date1 = format.parse(o1.getKey());
+                        Date date2 = format.parse(o2.getKey());
+                        return date1.compareTo(date2);
+                    } catch (ParseException e) {
+                        return o1.getKey().compareTo(o2.getKey());
+                    }
+                }
+            });
+
+            // Add a bar for each month
+            int[] colors = new int[]{
+                    getResources().getColor(R.color.colorPrimary, null),
+                    getResources().getColor(R.color.colorAccent, null),
+                    getResources().getColor(R.color.colorSuccess, null),
+                    getResources().getColor(R.color.colorWarning, null),
+                    getResources().getColor(R.color.colorInfo, null),
+                    getResources().getColor(R.color.colorError, null)
+            };
+
+            int colorIndex = 0;
+            for (Map.Entry<String, Double> entry : sortedEntries) {
+                // Create container for each bar
+                LinearLayout barContainer = new LinearLayout(requireContext());
+                barContainer.setOrientation(LinearLayout.HORIZONTAL);
+                barContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                barContainer.setPadding(0, 8, 0, 8);
+
+                // Label for month
+                TextView labelView = new TextView(requireContext());
+                labelView.setText(entry.getKey());
+                labelView.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, ViewGroup.LayoutParams.WRAP_CONTENT, 0.3f));
+
+                // Bar showing amount
+                View barView = new View(requireContext());
+                int width = 0;
+                if (maxValue > 0) {
+                    // Calculate proportional width based on max value
+                    width = (int)(entry.getValue() / maxValue *
+                            (chartView.getWidth() * 0.6));
+                }
+                barView.setLayoutParams(new LinearLayout.LayoutParams(
+                        width > 0 ? width : 10, 30));
+                barView.setBackgroundColor(colors[colorIndex % colors.length]);
+
+                // Amount text
+                TextView amountView = new TextView(requireContext());
+                amountView.setText(CurrencyUtils.formatCurrency(requireContext(), entry.getValue()));
+                amountView.setPadding(8, 0, 0, 0);
+
+                // Add views to container
+                barContainer.addView(labelView);
+                barContainer.addView(barView);
+                barContainer.addView(amountView);
+
+                // Add bar container to chart
+                chartLayout.addView(barContainer);
+
+                colorIndex++;
+            }
+
+            ((ViewGroup) chartView).addView(chartLayout);
+        }
     }
 
     @Override
@@ -201,10 +350,10 @@ public class DashboardFragment extends Fragment implements ExpenseAdapter.OnExpe
         if (expenses != null && position < expenses.size()) {
             Expense expense = expenses.get(position);
 
-            // Navigate to expense details/edit
-            // For example, using Navigation component:
-            // NavDirections action = DashboardFragmentDirections.actionDashboardToExpenseDetails(expense.getId());
-            // Navigation.findNavController(requireView()).navigate(action);
+            // Navigate to expense form for editing
+            Intent intent = new Intent(requireContext(), ExpenseFormActivity.class);
+            intent.putExtra("expense_id", expense.getId());
+            startActivity(intent);
         }
     }
 }

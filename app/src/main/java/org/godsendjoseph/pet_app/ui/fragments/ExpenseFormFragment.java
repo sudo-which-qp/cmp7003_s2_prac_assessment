@@ -2,6 +2,7 @@ package org.godsendjoseph.pet_app.ui.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import androidx.navigation.Navigation;
 import org.godsendjoseph.pet_app.R;
 import org.godsendjoseph.pet_app.models.Category;
 import org.godsendjoseph.pet_app.models.Expense;
+import org.godsendjoseph.pet_app.ui.activities.MainActivity;
 import org.godsendjoseph.pet_app.ui.adapters.CategorySpinnerAdapter;
 import org.godsendjoseph.pet_app.ui.viewmodels.CategoryViewModel;
 import org.godsendjoseph.pet_app.ui.viewmodels.ExpenseViewModel;
@@ -76,17 +78,18 @@ public class ExpenseFormFragment extends Fragment {
         expenseViewModel = new ViewModelProvider(this).get(ExpenseViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
 
+        // Setup date and time pickers
+        calendar = Calendar.getInstance();
+
         // Initialize views
         initViews(view);
+
+        setupDateTimePickers();
 
         // Get expense ID from arguments if editing
         if (getArguments() != null && getArguments().containsKey("expense_id")) {
             expenseId = getArguments().getInt("expense_id", -1);
         }
-
-        // Setup date and time pickers
-        calendar = Calendar.getInstance();
-        setupDateTimePickers();
 
         // Setup location autocomplete
         setupLocationAutocomplete();
@@ -409,7 +412,14 @@ public class ExpenseFormFragment extends Fragment {
 
                                 // Navigate back
                                 if (getActivity() != null) {
-                                    getActivity().onBackPressed();
+                                    // Check if this is the only activity in the task
+                                    if (getActivity().isTaskRoot()) {
+                                        // If it's the root, start MainActivity instead of closing app
+                                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                    // Always finish the current activity
+                                    getActivity().finish();
                                 }
                             } else {
                                 Toast.makeText(requireContext(),

@@ -14,6 +14,7 @@ import org.godsendjoseph.pet_app.R;
 import org.godsendjoseph.pet_app.database.CategoryDAO;
 import org.godsendjoseph.pet_app.models.Category;
 import org.godsendjoseph.pet_app.models.Expense;
+import org.godsendjoseph.pet_app.utils.CurrencyUtils;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -60,8 +61,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         Expense expense = expenseList.get(position);
 
         // Format currency amount
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
-        String formattedAmount = currencyFormat.format(expense.getAmount());
+        String formattedAmount = CurrencyUtils.formatCurrency(context, expense.getAmount());
 
         // Get category for the expense
         Category category = categoryDAO.getCategoryById(expense.getCategoryId());

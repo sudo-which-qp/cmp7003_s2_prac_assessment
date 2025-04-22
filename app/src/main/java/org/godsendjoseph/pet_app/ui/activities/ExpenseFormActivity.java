@@ -82,12 +82,14 @@ public class ExpenseFormActivity extends AppCompatActivity {
             setTitle("Add Expense");
         }
 
+        // Setup date and time pickers
+        calendar = Calendar.getInstance();
+
         // Initialize views
         initViews();
 
-        // Setup date and time pickers
-        calendar = Calendar.getInstance();
         setupDateTimePickers();
+
 
         // Load categories
         loadCategories();
